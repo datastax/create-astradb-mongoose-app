@@ -1,0 +1,16 @@
+{
+  "name": "astradb-mongoose-app",
+  "description": "Sample application for Astra DB with Mongoose",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "dotenv": "^16.3.1",
+    "mongoose": "^7.5.0",
+    "node-fetch": "^2.7.0",
+    "prompts": "^2.4.2",
+    "stargate-mongoose": "^0.2.0-ALPHA-5"
+  }
+}

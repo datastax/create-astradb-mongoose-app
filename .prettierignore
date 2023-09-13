@@ -1,0 +1,5 @@
+.DS_Store
+.env
+node_modules
+template/package-lock.json
+template/movies.json

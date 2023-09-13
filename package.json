@@ -1,0 +1,19 @@
+{
+  "name": "create-astradb-mongoose-app",
+  "version": "0.1.0",
+  "description": "Starter application for Astra DB with Mongoose",
+  "bin": {
+    "create-astradb-mongoose-app": "./index.js"
+  },
+  "author": "Valentin Kulichenko",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "cross-spawn": "^7.0.3",
+    "downloads-folder": "^3.0.3",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "prettier": "3.0.3"
+  }
+}
