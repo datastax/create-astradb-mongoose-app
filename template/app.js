@@ -9,6 +9,7 @@ const { generateEmbedding, movieToString, moviesToString } = require("./util");
 const loadData = async () => {
   await mongoose.connection.dropCollection("movies");
 
+  process.stdout.write("Creating Mongoose collection 'movies' and loading data from movies.json... \n");
   const Movie = mongoose.model(
     "Movie",
     new mongoose.Schema(
@@ -34,6 +35,7 @@ const loadData = async () => {
   );
 
   const movies = require("./movies.json");
+  process.stdout.write("Inserting " + movies.length + " movies including vector embeddings... \n");
   for (let i = 0; i < movies.length; i += 20) {
     await Movie.insertMany(movies.slice(i, i + 20));
   }
@@ -114,9 +116,14 @@ ${moviesToString(movies)}
 
 (async () => {
   try {
+    process.stdout.write("0️⃣  Connecting to Astra Vector DB using the following values from your configuration..." + 
+      "\n ASTRA_DB_ID = " + process.env.ASTRA_DB_ID + 
+      "\n ASTRA_DB_REGION = " + process.env.ASTRA_DB_REGION +
+      "\n ASTRA_DB_KEYSPACE = " + process.env.ASTRA_DB_KEYSPACE +
+      "\n ASTRA_DB_APPLICATION_TOKEN = " + process.env.ASTRA_DB_APPLICATION_TOKEN.substring(0, 13) + "...\n\n");
     await connectToAstraDb();
 
-    process.stdout.write("0️⃣  Loading the data to Astra DB... ");
+    process.stdout.write("0️⃣  Loading the data to Astra DB (~20s)... \n");
     await loadData();
     process.stdout.write(" DONE\n\n");
 
@@ -131,8 +138,10 @@ ${moviesToString(movies)}
       );
       await findMovieByDescription();
 
-      console.log("3️⃣  Finally, let's combine the two...");
+      console.log("3️⃣  Finally, let's combine the two...\n");
       await findMovieByGenreAndDescription();
+
+      console.log("Be sure to check out the app.js and astradb-mongoose.js files for code examples using the JSON API. \n\nHappy Coding!");
     } else {
       console.log(
         `🚫 I can't generate embeddings without an OpenAI API key.
