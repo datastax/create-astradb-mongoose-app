@@ -24,10 +24,19 @@ const generateEmbedding = async (prompt) => {
 };
 
 const movieToString = (movie) => {
-  return `  ${chalk.bold(movie.title)} ${chalk.dim(
-    "(" + movie.genre + ", " + movie.year + ")",
-  )}
-  ${movie.description}`;
+  if (movie.get('$similarity')) {
+    return `${chalk.magenta(movie.get('$similarity'))} ${chalk.bold(movie.title)} ${chalk.dim(
+      "(" + movie.genre + ", " + movie.year + ")",
+    )}
+    ${movie.description}`;
+
+  } else {
+    return `${chalk.bold(movie.title)} ${chalk.dim(
+      "(" + movie.genre + ", " + movie.year + ")",
+    )}
+    ${movie.description}`;
+  }
+
 };
 
 const moviesToString = (movies) => {
