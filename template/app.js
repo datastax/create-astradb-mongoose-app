@@ -6,9 +6,12 @@ const mongoose = require("mongoose");
 const { connectToAstraDb } = require("./astradb-mongoose");
 const { generateEmbedding, movieToString, moviesToString } = require("./util");
 
+// Create Mongoose "movies" collection
 const loadData = async () => {
+  console.log("Dropping existng collection " + chalk.bold.cyan('movies') + " if it exists...");
   await mongoose.connection.dropCollection("movies");
 
+  console.log("Creating Mongoose collection " + chalk.bold.cyan('movies') + " and loading data from " + chalk.bold.cyan('movies.json') + "...");
   const Movie = mongoose.model(
     "Movie",
     new mongoose.Schema(
@@ -34,11 +37,13 @@ const loadData = async () => {
   );
 
   const movies = require("./movies.json");
+  console.log("Inserting " + movies.length + " movies including vector embeddings... \n");
   for (let i = 0; i < movies.length; i += 20) {
     await Movie.insertMany(movies.slice(i, i + 20));
   }
 };
 
+// "findOne()" pattern using movie 'genre', no vector search
 const findMovieByGenre = async () => {
   const { genre } = await prompts({
     type: "select",
@@ -59,6 +64,7 @@ ${movieToString(movie)}
 `);
 };
 
+// "find()" pattern using vector search, generates an embedding from user input
 const findMovieByDescription = async () => {
   const { prompt } = await prompts({
     type: "text",
@@ -70,7 +76,7 @@ const findMovieByDescription = async () => {
 
   const movies = await mongoose
     .model("Movie")
-    .find({})
+    .find({}, { title: 1, genre: 1, year: 1, description : 1, $similarity: 1 })
     .sort({ $vector: { $meta: embedding } })
     .limit(3);
 
@@ -79,6 +85,7 @@ ${moviesToString(movies)}
 `);
 };
 
+// Hybrid "find()" pattern using movie 'genre' and vector search, generates an embedding from user input
 const findMovieByGenreAndDescription = async () => {
   const { genre, prompt } = await prompts([
     {
@@ -103,9 +110,9 @@ const findMovieByGenreAndDescription = async () => {
 
   const movies = await mongoose
     .model("Movie")
-    .find({ genre })
+    .find({ genre }, { title: 1, genre: 1, year: 1, description : 1, $similarity: 1 })
     .sort({ $vector: { $meta: embedding } })
-    .limit(2);
+    .limit(3);
 
   console.log(`Here are two most relevant movies based on your request:
 ${moviesToString(movies)}
@@ -114,11 +121,15 @@ ${moviesToString(movies)}
 
 (async () => {
   try {
+    console.log("0️⃣  Connecting to Astra Vector DB using the following values from your configuration..." + 
+      "\n" + chalk.bold.cyan('ASTRA_DB_ID') + " = " + process.env.ASTRA_DB_ID + 
+      "\n" + chalk.bold.cyan('ASTRA_DB_REGION') + " = " + process.env.ASTRA_DB_REGION +
+      "\n" + chalk.bold.cyan('ASTRA_DB_KEYSPACE') + " = " + process.env.ASTRA_DB_KEYSPACE +
+      "\n" + chalk.bold.cyan('ASTRA_DB_APPLICATION_TOKEN') + " = " + process.env.ASTRA_DB_APPLICATION_TOKEN.substring(0, 13) + "...\n\n");
     await connectToAstraDb();
 
-    process.stdout.write("0️⃣  Loading the data to Astra DB... ");
+    console.log("0️⃣  Loading the data to Astra DB (~20s)...");
     await loadData();
-    process.stdout.write(" DONE\n\n");
 
     console.log(
       "1️⃣  With the data loaded, I can find a movie based on your favorite genre.",
@@ -133,6 +144,8 @@ ${moviesToString(movies)}
 
       console.log("3️⃣  Finally, let's combine the two...");
       await findMovieByGenreAndDescription();
+
+      console.log("Be sure to check out the " + chalk.bold.cyan('app.js') + " and " + chalk.bold.cyan('astradb-mongoose.js') + " files for code examples using the JSON API. \n\nHappy Coding!");
     } else {
       console.log(
         `🚫 I can't generate embeddings without an OpenAI API key.
