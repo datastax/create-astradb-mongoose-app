@@ -45,6 +45,7 @@ const loadData = async () => {
       },
     ),
   );
+  await Movie.init();
 
   const movies = require("./movies.json");
   console.log(
