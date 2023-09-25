@@ -9,7 +9,7 @@ const { generateEmbedding, movieToString, moviesToString } = require("./util");
 // Create Mongoose "movies" collection
 const loadData = async () => {
   console.log(
-    "Dropping existng collection " +
+    "Dropping existing collection " +
       chalk.bold.cyan("movies") +
       " if it exists...",
   );
