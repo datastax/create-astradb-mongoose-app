@@ -40,7 +40,7 @@ const spawn = require("cross-spawn");
     {
       type: envConfig ? null : "text",
       name: "astraDbConfig",
-      message: "Where is your downloaded Astra DB configuration file located?",
+      message: "Where is your downloaded JSON API application configuration file located?",
       initial: path.resolve(downloadsDir(), "astradb-mongoose-config.json"),
       validate: (value) =>
         !fs.existsSync(value)
@@ -71,6 +71,19 @@ const spawn = require("cross-spawn");
         token: ASTRA_DB_APPLICATION_TOKEN,
       }
     : require(astraDbConfig);
+
+  if (!config.databaseId) {
+    throw new Error('Config file invalid, missing `databaseId`');
+  }
+  if (!config.region) {
+    throw new Error('Config file invalid, missing `region`');
+  }
+  if (!config.keyspace) {
+    throw new Error('Config file invalid, missing `keyspace`');
+  }
+  if (!config.token) {
+    throw new Error('Config file invalid, missing `token`');
+  }
 
   let env = `ASTRA_DB_ID=${config.databaseId}\nASTRA_DB_REGION=${config.region}\nASTRA_DB_KEYSPACE=${config.keyspace}\nASTRA_DB_APPLICATION_TOKEN=${config.token}`;
 
