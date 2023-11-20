@@ -11,6 +11,6 @@
     "mongoose": "^7.5.0",
     "node-fetch": "^2.7.0",
     "prompts": "^2.4.2",
-    "stargate-mongoose": "^0.2.0-ALPHA-5"
+    "stargate-mongoose": "^0.3.0"
   }
 }
