@@ -1,6 +1,6 @@
 {
   "name": "create-astradb-mongoose-app",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Create Astra DB Application with JSON API and Mongoose.js",
   "bin": {
     "create-astradb-mongoose-app": "./index.js"
