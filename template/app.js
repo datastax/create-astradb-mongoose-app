@@ -89,7 +89,7 @@ const findMovieByDescription = async () => {
 
   const movies = await mongoose
     .model("Movie")
-    .find({}, { title: 1, genre: 1, year: 1, description: 1, $similarity: 1 })
+    .find({}, { title: 1, genre: 1, year: 1, description: 1},{ includeSimilarity: true})
     .sort({ $vector: { $meta: embedding } })
     .limit(3);
 
@@ -125,7 +125,8 @@ const findMovieByGenreAndDescription = async () => {
     .model("Movie")
     .find(
       { genre },
-      { title: 1, genre: 1, year: 1, description: 1, $similarity: 1 },
+      { title: 1, genre: 1, year: 1, description: 1},
+      { includeSimilarity: true}
     )
     .sort({ $vector: { $meta: embedding } })
     .limit(3);
