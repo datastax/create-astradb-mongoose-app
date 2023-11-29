@@ -2,3 +2,4 @@
 .env
 node_modules
 template/package-lock.json
+.idea
