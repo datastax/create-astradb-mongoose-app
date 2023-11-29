@@ -5,6 +5,14 @@
   "bin": {
     "create-astradb-mongoose-app": "./index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/datastax/create-astradb-mongoose-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/datastax/create-astradb-mongoose-app/issues/new"
+  },
+  "homepage": "https://github.com/datastax/create-astradb-mongoose-app",
   "license": "Apache-2.0",
   "dependencies": {
     "chalk": "^4.1.2",
