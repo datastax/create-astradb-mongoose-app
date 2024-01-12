@@ -89,7 +89,11 @@ const findMovieByDescription = async () => {
 
   const movies = await mongoose
     .model("Movie")
-    .find({}, { title: 1, genre: 1, year: 1, description: 1},{ includeSimilarity: true})
+    .find(
+      {},
+      { title: 1, genre: 1, year: 1, description: 1 },
+      { includeSimilarity: true },
+    )
     .sort({ $vector: { $meta: embedding } })
     .limit(3);
 
@@ -125,8 +129,8 @@ const findMovieByGenreAndDescription = async () => {
     .model("Movie")
     .find(
       { genre },
-      { title: 1, genre: 1, year: 1, description: 1},
-      { includeSimilarity: true}
+      { title: 1, genre: 1, year: 1, description: 1 },
+      { includeSimilarity: true },
     )
     .sort({ $vector: { $meta: embedding } })
     .limit(3);
@@ -141,17 +145,9 @@ ${moviesToString(movies)}
     console.log(
       "0️⃣  Connecting to Astra Vector DB using the following values from your configuration..." +
         "\n" +
-        chalk.bold.cyan("ASTRA_DB_ID") +
+        chalk.bold.cyan("ASTRA_DB_API_ENDPOINT") +
         " = " +
-        process.env.ASTRA_DB_ID +
-        "\n" +
-        chalk.bold.cyan("ASTRA_DB_REGION") +
-        " = " +
-        process.env.ASTRA_DB_REGION +
-        "\n" +
-        chalk.bold.cyan("ASTRA_DB_KEYSPACE") +
-        " = " +
-        process.env.ASTRA_DB_KEYSPACE +
+        process.env.ASTRA_DB_API_ENDPOINT +
         "\n" +
         chalk.bold.cyan("ASTRA_DB_APPLICATION_TOKEN") +
         " = " +
@@ -182,7 +178,7 @@ ${moviesToString(movies)}
           chalk.bold.cyan("app.js") +
           " and " +
           chalk.bold.cyan("astradb-mongoose.js") +
-          " files for code examples using the JSON API. \n\nHappy Coding!",
+          " files for code examples using the Data API. \n\nHappy Coding!",
       );
     } else {
       console.log(

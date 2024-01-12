@@ -8,9 +8,9 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "dotenv": "^16.3.1",
-    "mongoose": "^7.5.0",
+    "mongoose": "^8.0.4",
     "node-fetch": "^2.7.0",
     "prompts": "^2.4.2",
-    "stargate-mongoose": "^0.3.0"
+    "stargate-mongoose": "^0.4.2"
   }
 }

@@ -2,7 +2,6 @@
 
 const fs = require("fs");
 const path = require("path");
-const downloadsDir = require("downloads-folder");
 const prompts = require("prompts");
 const chalk = require("chalk");
 const spawn = require("cross-spawn");
@@ -24,28 +23,19 @@ const spawn = require("cross-spawn");
     recursive: true,
   });
 
-  const {
-    ASTRA_DB_ID,
-    ASTRA_DB_REGION,
-    ASTRA_DB_KEYSPACE,
-    ASTRA_DB_APPLICATION_TOKEN,
-  } = process.env;
-  const envConfig =
-    ASTRA_DB_ID &&
-    ASTRA_DB_REGION &&
-    ASTRA_DB_KEYSPACE &&
-    ASTRA_DB_APPLICATION_TOKEN;
+  let apiEndpoint = process.env.ASTRA_DB_API_ENDPOINT;
+  let applicationToken = process.env.ASTRA_DB_APPLICATION_TOKEN;
 
-  const { astraDbConfig, openAIKey } = await prompts([
+  const answers = await prompts([
     {
-      type: envConfig ? null : "text",
-      name: "astraDbConfig",
-      message: "Where is your downloaded JSON API application configuration file located?",
-      initial: path.resolve(downloadsDir(), "astradb-mongoose-config.json"),
-      validate: (value) =>
-        !fs.existsSync(value)
-          ? "Configuration file doesn't exist. Please provide the correct path."
-          : true,
+      type: apiEndpoint ? null : "text",
+      name: "apiEndpoint",
+      message: "What is your Data API enpoint?",
+    },
+    {
+      type: applicationToken ? null : "password",
+      name: "applicationToken",
+      message: "What is your Astra DB application token?",
     },
     {
       type: "toggle",
@@ -63,32 +53,26 @@ const spawn = require("cross-spawn");
     },
   ]);
 
-  const config = envConfig
-    ? {
-        databaseId: ASTRA_DB_ID,
-        region: ASTRA_DB_REGION,
-        keyspace: ASTRA_DB_KEYSPACE,
-        token: ASTRA_DB_APPLICATION_TOKEN,
-      }
-    : require(astraDbConfig);
+  if (!apiEndpoint) {
+    apiEndpoint = answers.apiEndpoint;
 
-  if (!config.databaseId) {
-    throw new Error('Config file invalid, missing `databaseId`');
-  }
-  if (!config.region) {
-    throw new Error('Config file invalid, missing `region`');
-  }
-  if (!config.keyspace) {
-    throw new Error('Config file invalid, missing `keyspace`');
-  }
-  if (!config.token) {
-    throw new Error('Config file invalid, missing `token`');
+    if (!apiEndpoint) {
+      throw new Error("Missing API endpoint.");
+    }
   }
 
-  let env = `ASTRA_DB_ID=${config.databaseId}\nASTRA_DB_REGION=${config.region}\nASTRA_DB_KEYSPACE=${config.keyspace}\nASTRA_DB_APPLICATION_TOKEN=${config.token}`;
+  if (!applicationToken) {
+    applicationToken = answers.applicationToken;
 
-  if (openAIKey) {
-    env += `\nOPENAI_API_KEY=${openAIKey}`;
+    if (!applicationToken) {
+      throw new Error("Missing application token.");
+    }
+  }
+
+  let env = `ASTRA_DB_API_ENDPOINT=${apiEndpoint}\nASTRA_DB_APPLICATION_TOKEN=${applicationToken}`;
+
+  if (answers.openAIKey) {
+    env += `\nOPENAI_API_KEY=${answers.openAIKey}`;
   }
 
   fs.writeFileSync(path.join(projectDir, ".env"), env);
