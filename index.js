@@ -30,7 +30,7 @@ const spawn = require("cross-spawn");
     {
       type: apiEndpoint ? null : "text",
       name: "apiEndpoint",
-      message: "What is your Data API enpoint?",
+      message: "What is your Data API endpoint?",
     },
     {
       type: applicationToken ? null : "password",
